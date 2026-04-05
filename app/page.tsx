@@ -39,6 +39,7 @@ type Step = 'home' | 'form' | 'success' | 'track';
 
 export default function HomePage() {
   const [step, setStep] = useState<Step>('home');
+  const [selectedDocType, setSelectedDocType] = useState<DocumentType | ''>('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState<DocumentRequest | null>(null);
   const [trackNumber, setTrackNumber] = useState('');
@@ -64,6 +65,7 @@ export default function HomePage() {
       setSubmitted(json.data);
       setStep('success');
       reset();
+      setSelectedDocType('');
     } catch (err: unknown) {
       toast({ variant: 'destructive', title: 'Submission failed', description: err instanceof Error ? err.message : 'Please try again.' });
     } finally {
@@ -140,8 +142,12 @@ export default function HomePage() {
             <div className="mb-16">
               <h2 className="font-display text-2xl text-center mb-8" style={{ color: 'var(--navy)' }}>Available Documents</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {(Object.entries(DOCUMENT_TYPE_LABELS) as [DocumentType, string][]).map(([, label], i) => (
-                  <div key={i} onClick={() => setStep('form')}
+                {(Object.entries(DOCUMENT_TYPE_LABELS) as [DocumentType, string][]).map(([value, label], i) => (
+                  <div key={i} onClick={() => {
+                    setSelectedDocType(value);
+                    setValue('document_type', value);
+                    setStep('form');
+                  }}
                     className="p-4 rounded-xl border border-slate-200 bg-white hover:border-[#0F2D5E] hover:shadow-md transition-all cursor-pointer group">
                     <div className="w-10 h-10 rounded-lg mb-3 flex items-center justify-center" style={{ background: 'rgba(15,45,94,0.06)' }}>
                       <FileText className="w-5 h-5" style={{ color: 'var(--navy)' }} />
@@ -240,7 +246,13 @@ export default function HomePage() {
                   <div className="space-y-4">
                     <div className="space-y-1.5">
                       <Label>Document Type *</Label>
-                      <Select onValueChange={(v) => setValue('document_type', v as DocumentType)}>
+                      <Select
+                        value={selectedDocType || undefined}
+                        onValueChange={(v) => {
+                          setSelectedDocType(v as DocumentType);
+                          setValue('document_type', v as DocumentType);
+                        }}
+                      >
                         <SelectTrigger><SelectValue placeholder="Select document type" /></SelectTrigger>
                         <SelectContent>
                           {(Object.entries(DOCUMENT_TYPE_LABELS) as [DocumentType, string][]).map(([value, label]) => (
