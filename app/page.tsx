@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -99,8 +100,9 @@ export default function HomePage() {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-sm shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <button onClick={() => setStep('home')} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-bold font-display"
-              style={{ background: 'var(--navy)' }}>B</div>
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-white border border-slate-200 shrink-0">
+              <Image src="/logo.png" alt="Barangay Bakakeng Logo" width={40} height={40} className="object-cover w-full h-full" />
+            </div>
             <div className="text-left">
               <p className="text-xs text-slate-500 leading-none">Republic of the Philippines</p>
               <h1 className="text-sm font-semibold leading-tight" style={{ color: 'var(--navy)' }}>Barangay Bakakeng</h1>

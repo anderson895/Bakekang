@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Loader2, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,9 +43,8 @@ export default function LoginPage() {
       <div className="relative w-full max-w-md animate-fade-up">
         {/* Logo area */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 font-display text-2xl font-bold text-white"
-            style={{ background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(244,169,0,0.4)' }}>
-            B
+          <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 bg-white shadow-lg">
+            <Image src="/logo.png" alt="Barangay Bakakeng Logo" width={96} height={96} className="object-cover w-full h-full" />
           </div>
           <h1 className="font-display text-2xl text-white mb-1">Barangay Bakakeng</h1>
           <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>Document Management System</p>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -43,9 +44,8 @@ export default function AdminSidebar({ user, profile }: Props) {
       {/* Logo */}
       <div className="p-4 border-b border-white/10">
         <div className={cn('flex items-center gap-3', collapsed && 'justify-center')}>
-          <div className="w-9 h-9 rounded-full flex items-center justify-center font-display font-bold text-white shrink-0"
-            style={{ background: 'rgba(244,169,0,0.25)', border: '1.5px solid rgba(244,169,0,0.4)' }}>
-            B
+          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-white">
+            <Image src="/logo.png" alt="Barangay Bakakeng Logo" width={36} height={36} className="object-cover w-full h-full" />
           </div>
           {!collapsed && (
             <div>
