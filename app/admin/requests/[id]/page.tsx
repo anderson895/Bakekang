@@ -4,12 +4,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   ArrowLeft, CheckCircle, XCircle, Clock, Loader2,
-  Upload, FileText, Download, Trash2, AlertCircle, ChevronDown
+  Upload, FileText, Download, AlertCircle, ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { DocumentRequest, DOCUMENT_TYPE_LABELS, STATUS_CONFIG, RequestStatus } from '@/types';
 import { formatDateTime, formatDate } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';

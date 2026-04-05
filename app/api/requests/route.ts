@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     const nameSearch = search.trim();
     const parts = nameSearch.split(' ');
 
-    let nameQuery = supabase
+    const nameQuery = supabase
       .from('residents')
       .select('id')
       .or(`first_name.ilike.%${parts[0]}%,last_name.ilike.%${parts[0]}%`);

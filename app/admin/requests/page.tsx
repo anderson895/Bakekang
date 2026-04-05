@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DocumentRequest, DOCUMENT_TYPE_LABELS, STATUS_CONFIG, RequestStatus } from '@/types';
-import { formatTimeAgo, formatDateTime } from '@/lib/utils';
+import { formatTimeAgo } from '@/lib/utils';
 
 const STATUSES: { value: string; label: string }[] = [
   { value: 'all', label: 'All Requests' },
