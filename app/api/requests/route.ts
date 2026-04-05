@@ -28,16 +28,59 @@ export async function GET(request: NextRequest) {
     query = query.eq('status', status);
   }
 
+  // Search only by control_number at the request level
+  // (cannot filter joined table columns with .or() in Supabase)
   if (search) {
-    query = query.or(
-      `control_number.ilike.%${search}%,residents.first_name.ilike.%${search}%,residents.last_name.ilike.%${search}%`
-    );
+    query = query.ilike('control_number', `%${search}%`);
   }
 
   const { data, error, count } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // If search didn't match by control number, try searching by resident name
+  if (search && (!data || data.length === 0)) {
+    const nameSearch = search.trim();
+    const parts = nameSearch.split(' ');
+
+    let nameQuery = supabase
+      .from('residents')
+      .select('id')
+      .or(`first_name.ilike.%${parts[0]}%,last_name.ilike.%${parts[0]}%`);
+
+    const { data: residentMatches } = await nameQuery;
+
+    if (residentMatches && residentMatches.length > 0) {
+      const residentIds = residentMatches.map(r => r.id);
+
+      let nameReqQuery = supabase
+        .from('document_requests')
+        .select(`
+          *,
+          residents (
+            id, first_name, last_name, middle_name,
+            address, contact_number, email, purok
+          ),
+          uploaded_documents (*)
+        `, { count: 'exact' })
+        .in('resident_id', residentIds)
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      if (status && status !== 'all') {
+        nameReqQuery = nameReqQuery.eq('status', status);
+      }
+
+      const { data: nameData, error: nameError, count: nameCount } = await nameReqQuery;
+
+      if (nameError) {
+        return NextResponse.json({ error: nameError.message }, { status: 500 });
+      }
+
+      return NextResponse.json({ data: nameData, count: nameCount, page, limit });
+    }
   }
 
   return NextResponse.json({ data, count, page, limit });
@@ -54,7 +97,7 @@ export async function POST(request: NextRequest) {
       document_type, purpose,
     } = body;
 
-    // Upsert resident
+    // Insert resident
     const { data: resident, error: residentError } = await supabase
       .from('residents')
       .insert({

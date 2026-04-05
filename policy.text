@@ -1,0 +1,66 @@
+-- ── Step 1: Disable RLS temporarily ─────────────────────────
+ALTER TABLE residents DISABLE ROW LEVEL SECURITY;
+ALTER TABLE document_requests DISABLE ROW LEVEL SECURITY;
+ALTER TABLE uploaded_documents DISABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_profiles DISABLE ROW LEVEL SECURITY;
+ALTER TABLE activity_logs DISABLE ROW LEVEL SECURITY;
+
+-- ── Step 2: Drop ALL existing policies ───────────────────────
+DROP POLICY IF EXISTS "Public can insert residents" ON residents;
+DROP POLICY IF EXISTS "Authenticated can view residents" ON residents;
+DROP POLICY IF EXISTS "Authenticated can update residents" ON residents;
+DROP POLICY IF EXISTS "Public can insert document requests" ON document_requests;
+DROP POLICY IF EXISTS "Public can view requests" ON document_requests;
+DROP POLICY IF EXISTS "Public can view requests by control number" ON document_requests;
+DROP POLICY IF EXISTS "Authenticated can update document requests" ON document_requests;
+DROP POLICY IF EXISTS "Authenticated can view uploaded documents" ON uploaded_documents;
+DROP POLICY IF EXISTS "Authenticated can insert uploaded documents" ON uploaded_documents;
+DROP POLICY IF EXISTS "Authenticated can view admin profiles" ON admin_profiles;
+DROP POLICY IF EXISTS "Admin can update own profile" ON admin_profiles;
+DROP POLICY IF EXISTS "Authenticated can insert logs" ON activity_logs;
+DROP POLICY IF EXISTS "Authenticated can view logs" ON activity_logs;
+
+-- ── Step 3: Grant anon role permissions ──────────────────────
+GRANT USAGE ON SCHEMA public TO anon;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon;
+
+-- ── Step 4: Re-enable RLS ────────────────────────────────────
+ALTER TABLE residents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE document_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE uploaded_documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE activity_logs ENABLE ROW LEVEL SECURITY;
+
+-- ── Step 5: Create correct policies ──────────────────────────
+-- Residents
+CREATE POLICY "anon_insert_residents"
+  ON residents FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+CREATE POLICY "anon_select_residents"
+  ON residents FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "auth_update_residents"
+  ON residents FOR UPDATE TO authenticated USING (true);
+
+-- Document requests
+CREATE POLICY "anon_insert_requests"
+  ON document_requests FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+CREATE POLICY "anon_select_requests"
+  ON document_requests FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "auth_update_requests"
+  ON document_requests FOR UPDATE TO authenticated USING (true);
+
+-- Uploaded documents
+CREATE POLICY "auth_all_uploads"
+  ON uploaded_documents FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Admin profiles
+CREATE POLICY "auth_all_admin_profiles"
+  ON admin_profiles FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Activity logs
+CREATE POLICY "auth_all_logs"
+  ON activity_logs FOR ALL TO authenticated USING (true) WITH CHECK (true);
