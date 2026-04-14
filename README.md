@@ -1,4 +1,4 @@
-# 🏛️ Brgy. Bakakeng — Document Management System
+# Brgy. Bakakeng — Document Management System
 
 A full-stack web application for Barangay Bakakeng, Baguio City.
 
